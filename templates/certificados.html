@@ -1,0 +1,31 @@
+<html>
+    {%include 'header.html'%}
+    {% load bootstrap5 %}
+    <div class="container">
+        <div class="row m-5 g-0 d-flex align-items-center justify-content-center"> 
+            <div class="col-md-8 col-sm-10 col-xs-12 shadow-lg flex-column rounded-5 p-2 d-flex align-items-center justify-content-center">
+                <div><h1> Certificados </h1></div>
+                <div class="table-responsive border w-100" style="height: 20em;overflow-y: auto;">
+                    <table class="table">
+                        <tr>
+                            <th>#</th>
+                            <th>Tema</th>
+                            <th>Data</th>
+                            <th>Gerar</th>
+                        </tr>
+                        {%for evento in eventos%}
+                        <tr>
+                            <td>{{evento.id}}</td>
+                            <td>{{evento.tema}}</td>
+                            <td>{{evento.data}}</td>
+                            <td>
+                                <a href="{%url 'downloadCertificado' pk_evento=evento.id pk_participante=user.id %}" class="btn btn-success" alt="Gerar"><i class="bi bi-patch-check"></i></a>
+                            </td>
+                        </tr>
+                        {%endfor%}
+                    </table>
+                </div>    
+            </div>
+        </div>
+    </div>
+</html>

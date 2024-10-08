@@ -1,0 +1,56 @@
+<html>
+    {%include 'header_admin.html'%}
+    {%load bootstrap5%}
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            {%include 'sidebar.html'%}
+            <main class="col d-flex py-3">
+                <div class="container">
+                    <h3>Eventos</h3>
+                    <div class="row align-items-center mt-2 mb-2">
+                        <div class="col p-0">
+                            <form method="get" class="p-0 m-0" action="{% url 'adminEvento' %}">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary me-2">Buscar</button>
+                                    </div>
+                                    <input type="text" class="form-control" name="filter" placeholder="Tema">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col col-auto p-0 ps-2 d-flex justify-content-end">
+                            <a type="button" class="btn btn-success" href="cadastrar">Novo</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="table-responsive border" style="height: 20em;overflow-y: auto;">
+                            <table class="table">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Tema</th>
+                                    <th>Data</th>
+                                    <th>Operações</th>
+                                </tr>
+                                {%for evento in eventos%}
+                                <tr>
+                                    <td>{{evento.id}}</td>
+                                    <td>{{evento.tema}}</td>
+                                    <td>{{evento.data}}</td>
+                                    <td>
+                                        <form method="POST" class="p-0 m-0" action="{% url 'adminEvento' %}">
+                                            {% csrf_token %}   
+                                            <button type="submit" class="btn btn-danger" alt="Apagar"><i class="bi bi-trash"></i></button>
+                                            <input type="hidden" class="form-control" name="pk_evento" value="{{evento.id}}">
+                                            <a href="{% url 'adminEditarEvento' pk=evento.id %}" class="btn btn-warning" alt="Editar"><i class="bi bi-pencil-square"></i></a>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {%endfor%}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</html>

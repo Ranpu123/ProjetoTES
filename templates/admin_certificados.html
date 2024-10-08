@@ -1,0 +1,76 @@
+<html>
+    {%include 'header_admin.html'%}
+    {%load bootstrap5%}
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            {%include 'sidebar.html'%}
+            <main class="col d-flex py-3">
+                <div class="container">
+                    <h3>Cerficados</h3>
+                    <div class="row align-items-center mt-2 mb-2">
+                        <div class="col p-0">
+                            <form method="get" class="p-0 m-0 w-100" action="{% url 'adminCertificado' %}">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary me-2">Buscar</button>
+                                    </div>
+                                    <input type="text" class="form-control" name="filter" placeholder="Tópico">
+                                    <div class="col-auto ps-2">
+                                        <select class="form-select" name="event" id="event">
+                                            <option value="-1" selected>Selecionar Evento</option>
+                                            {%for evento in eventos%}
+                                                <option value="{{evento.id}}" >{{evento.tema|slice:":30"}}</option>
+                                            {%endfor%}
+                                            
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="table-responsive border" style="height: 20em;overflow-y: auto;">
+                            <table class="table">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nome</th>
+                                    <th>Sobrenome</th>
+                                    <th>CPF</th>
+                                    <th>Operações</th>
+                                </tr>
+                                {%for aluno in alunos%}
+                                <tr>
+                                    <td>{{aluno.id}}</td>
+                                    <td>{{aluno.nome}}</td>
+                                    <td>{{aluno.sobrenome}}</td>
+                                    <td>{{aluno.CPF}}</td>
+                                    <td>
+                                        <form method="POST" class="p-0 m-0" action="{% url 'adminCertificado' %}">
+                                            {% csrf_token %}   
+                                            <a href="{%url 'adminDownloadCertificado' pk_evento=evento.id pk_participante=aluno.id%}" class="btn btn-success" alt="Gerar"><i class="bi bi-patch-check"></i></a>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {%endfor%}
+                                {%for professor in professores%}
+                                <tr>
+                                    <td>{{professor.id}}</td>
+                                    <td>{{professor.nome}}</td>
+                                    <td>{{professor.sobrenome}}</td>
+                                    <td>{{professor.CPF}}</td>
+                                    <td>
+                                        <form method="POST" class="p-0 m-0" action="{% url 'adminCertificado' %}">
+                                            {% csrf_token %}   
+                                            <a href="{%url 'adminDownloadCertificado' pk_evento=evento.id pk_participante=professor.id%}" class="btn btn-success" alt="Gerar"><i class="bi bi-patch-check"></i></a>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {%endfor%}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</html>

@@ -1,0 +1,57 @@
+<html>
+    {%include 'header_admin.html'%}
+    {%load bootstrap5%}
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            {%include 'sidebar.html'%}
+            <main class="col d-flex py-3">
+                <div class="container">
+                    <a class="text-decoration-none" href="{% url 'adminVisualizarExibicao' exibicao.id %}"><h3><i class="bi bi-arrow-left-circle"></i> Voltar</h3></a>
+                    <h3>Avaliações - {{exibicao.topico}} - {{aluno.nome}} {{aluno.sobrenome}}</h3>
+                    <div class="row align-items-center mt-2 mb-2">
+                        <div class="col p-0">
+                            <form method="get" class="p-0 m-0" action="{% url 'adminAvaliar' pk_exibicao=exibicao.id pk_aluno=aluno.id %}">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary me-2">Buscar</button>
+                                    </div>
+                                    <input type="date" class="form-control" name="filter" placeholder="Data">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col col-auto p-0 ps-2 d-flex justify-content-end">
+                            <a type="button" class="btn btn-success" href="{% url 'adminCadastrarAvaliacao' pk_exibicao=exibicao.id pk_aluno=aluno.id %}">Novo</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="table-responsive border" style="height: 20em;overflow-y: auto;">
+                            <table class="table">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Descrição</th>
+                                    <th>Data Avaliação</th>
+                                    <th>Operações</th>
+                                </tr>
+                                {%for avaliacao in avaliacoes%}
+                                <tr>
+                                    <td>{{avaliacao.id}}</td>
+                                    <td>{{avaliacao.descricao|slice:":50"}}</td>
+                                    <td>{{avaliacao.dataAvaliacao}}</td>
+                                    <td>
+                                        <form method="POST" class="p-0 m-0" action="{% url 'adminAvaliar' pk_exibicao=exibicao.id pk_aluno=aluno.id %}">
+                                            {% csrf_token %}   
+                                            <button type="submit" class="btn btn-danger" alt="Apagar"><i class="bi bi-trash"></i></button>
+                                            <input type="hidden" class="form-control" name="pk_avaliacao" value="{{avaliacao.id}}">
+                                            <a href="{% url 'adminEditarAvaliacao' pk=avaliacao.id %}" class="btn btn-warning" alt="Editar"><i class="bi bi-pencil-square"></i></a>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {%endfor%}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</html>

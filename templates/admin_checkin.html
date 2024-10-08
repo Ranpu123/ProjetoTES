@@ -1,0 +1,63 @@
+<html>
+    {%include 'header_admin.html'%}
+    {%load bootstrap5%}
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            {%include 'sidebar.html'%}
+            <main class="col d-flex py-3">
+                <div class="container">
+                    <h3>Check-in</h3>
+                    {%if not current_date == evento.data %}
+                    <p><b>Lista Indisponível</b> - Evento programado para {{evento.data}}.</p>
+                    {%endif%}
+                    <div class="row align-items-center mt-2 mb-2">
+                        <div class="col p-0">
+                            <form method="get" class="p-0 m-0" action="{% url 'adminCheckin' %}">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary me-2">Buscar</button>
+                                    </div>
+                                    <input type="text" class="form-control" name="filter" placeholder="Nome">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="table-responsive border" style="height: 20em;overflow-y: auto;">
+                            <table class="table">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nome</th>
+                                    <th>Sobrenome</th>
+                                    <th>CPF</th>
+                                    <th>Data Inscrição</th>
+                                    <th>Validar</th>
+                                </tr>
+                                {%if current_date == evento.data%}
+                                {%for inscricao in inscricoes%}
+                                <tr>
+                                    <td>{{inscricao.id}}</td>
+                                    <td>{{inscricao.participante.nome}}</td>
+                                    <td>{{inscricao.participante.sobrenome}}</td>
+                                    <td>{{inscricao.participante.CPF}}</td>
+                                    <td>{{inscricao.dataHora}}</td>
+                                    {%if not inscricao.has_checkin%}
+                                    <td>
+                                        <form method="POST" class="p-0 m-0" action="{% url 'adminCheckinValidar' pk_evento=evento.id pk_inscricao=inscricao.id %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" class="form-control" name="validar" value="{{inscricao.id}}">
+                                            <button type="submit" class="btn btn-success" alt="Validar"><i class="bi bi-check2-square"></i></button>
+                                        </form>
+                                    </td>
+                                    {%endif%}
+                                </tr>
+                                {%endfor%}
+                                {%endif%}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</html>
