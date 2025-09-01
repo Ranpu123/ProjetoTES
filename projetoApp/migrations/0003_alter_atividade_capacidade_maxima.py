@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projetoApp', '0002_add_capacidade_maxima'),
+        ('projetoApp', '0001_initial'),
     ]
 
     operations = [

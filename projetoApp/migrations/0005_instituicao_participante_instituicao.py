@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projetoApp', '0004_add_checkin'),
+        ('projetoApp', '0003_alter_atividade_capacidade_maxima'),
     ]
 
     operations = [

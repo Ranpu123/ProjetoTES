@@ -143,7 +143,7 @@ class Migration(migrations.Migration):
                 ('dataHora', models.DateTimeField(verbose_name='Horario')),
                 ('atividade', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='projetoApp.atividade')),
                 ('inscricao', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='projetoApp.inscricao')),
-                ('aluno', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='projetoApp.aluno')),
+                ('aluno', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='projetoApp.aluno', to_field='usuario_ptr_id')),
             ],
         ),
         migrations.CreateModel(
