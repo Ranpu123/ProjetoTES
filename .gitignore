@@ -4,3 +4,4 @@ TODO PADS.md
 venv/
 .venv
 .ideia
+__pycache__/
