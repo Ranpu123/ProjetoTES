@@ -356,68 +356,73 @@ def adminCheckin(request):
 
     context = {}
     # Obtendo o evento atual
-    context["evento"] = evento = Evento.objects.get_last_event()
-    context["current_date"] = date.today()
+    try:
+        context["evento"] = evento = Evento.objects.get_last_event()
+        context["current_date"] = date.today()
 
-    # Lista de inscrições para o evento
-    inscricoes = Inscricao.objects.filter(evento=evento)
-    
-    # Verificar se cada inscrição já possui check-in
-    inscricoes_com_checkin = []
-    for inscricao in inscricoes:
-        has_checkin = CheckIn.objects.filter(inscricao=inscricao).exists()
-        inscricoes_com_checkin.append({
-            'inscricao': inscricao,
-            'has_checkin': has_checkin
-        })
-    context["inscricoes_com_checkin"] = inscricoes_com_checkin
-
-    # Lista de atividades do evento
-    atividades_do_evento = Atividade.objects.filter(evento=evento)
-    context["atividades"] = atividades_do_evento
-
-    # Agrupar alunos por atividade
-    alunos_por_atividade = []
-    for atividade in atividades_do_evento:
-        alunos_vinculados = atividade.alunos.all()  # Usando o related_name da relação ManyToMany
-        alunos_com_checkin = []
-        for aluno in alunos_vinculados:
-            has_checkin = CheckIn.objects.filter(aluno=aluno, atividade=atividade).exists()
-            alunos_com_checkin.append({
-                'aluno': aluno,
+        # Lista de inscrições para o evento
+        inscricoes = Inscricao.objects.filter(evento=evento)
+        
+        # Verificar se cada inscrição já possui check-in
+        inscricoes_com_checkin = []
+        for inscricao in inscricoes:
+            has_checkin = CheckIn.objects.filter(inscricao=inscricao).exists()
+            inscricoes_com_checkin.append({
+                'inscricao': inscricao,
                 'has_checkin': has_checkin
             })
-        alunos_por_atividade.append({
-            'atividade': atividade,
-            'alunos': alunos_com_checkin
-        })
-    context["alunos_por_atividade"] = alunos_por_atividade
+        context["inscricoes_com_checkin"] = inscricoes_com_checkin
 
-    # Filtro baseado em parâmetros da URL
-    if 'filter' in request.GET:
-        filter_value = request.GET['filter']
-        # Filtrar inscrições
-        inscricoes_filtradas = [
-            inscricao_info for inscricao_info in inscricoes_com_checkin
-            if filter_value.lower() in inscricao_info['inscricao'].participante.nome.lower() or
-               filter_value.lower() in inscricao_info['inscricao'].participante.sobrenome.lower()
-        ]
-        context["inscricoes_com_checkin"] = inscricoes_filtradas
+        # Lista de atividades do evento
+        atividades_do_evento = Atividade.objects.filter(evento=evento)
+        context["atividades"] = atividades_do_evento
 
-        # Filtrar alunos por atividade
-        atividades_filtradas = []
-        for atividade_info in alunos_por_atividade:
-            alunos_filtrados = [
-                aluno_info for aluno_info in atividade_info['alunos']
-                if filter_value.lower() in aluno_info['aluno'].nome.lower() or
-                   filter_value.lower() in aluno_info['aluno'].sobrenome.lower()
-            ]
-            if alunos_filtrados:
-                atividades_filtradas.append({
-                    'atividade': atividade_info['atividade'],
-                    'alunos': alunos_filtrados
+        # Agrupar alunos por atividade
+        alunos_por_atividade = []
+        for atividade in atividades_do_evento:
+            alunos_vinculados = atividade.alunos.all()  # Usando o related_name da relação ManyToMany
+            alunos_com_checkin = []
+            for aluno in alunos_vinculados:
+                has_checkin = CheckIn.objects.filter(aluno=aluno, atividade=atividade).exists()
+                alunos_com_checkin.append({
+                    'aluno': aluno,
+                    'has_checkin': has_checkin
                 })
-        context["alunos_por_atividade"] = atividades_filtradas
+            alunos_por_atividade.append({
+                'atividade': atividade,
+                'alunos': alunos_com_checkin
+            })
+        context["alunos_por_atividade"] = alunos_por_atividade
+
+        # Filtro baseado em parâmetros da URL
+        if 'filter' in request.GET:
+            filter_value = request.GET['filter']
+            # Filtrar inscrições
+            inscricoes_filtradas = [
+                inscricao_info for inscricao_info in inscricoes_com_checkin
+                if filter_value.lower() in inscricao_info['inscricao'].participante.nome.lower() or
+                   filter_value.lower() in inscricao_info['inscricao'].participante.sobrenome.lower()
+            ]
+            context["inscricoes_com_checkin"] = inscricoes_filtradas
+
+            # Filtrar alunos por atividade
+            atividades_filtradas = []
+            for atividade_info in alunos_por_atividade:
+                alunos_filtrados = [
+                    aluno_info for aluno_info in atividade_info['alunos']
+                    if filter_value.lower() in aluno_info['aluno'].nome.lower() or
+                       filter_value.lower() in aluno_info['aluno'].sobrenome.lower()
+                ]
+                if alunos_filtrados:
+                    atividades_filtradas.append({
+                        'atividade': atividade_info['atividade'],
+                        'alunos': alunos_filtrados
+                    })
+            context["alunos_por_atividade"] = atividades_filtradas
+    except Http404:
+        # Caso não haja eventos disponíveis
+        context["evento"] = None
+        context["current_date"] = date.today()
 
     return render(request, "admin_checkin.html", context)
 
