@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.db.models import Value as V
 from django.db.models.functions import Concat  
 from django.db.models import Count  
+from django.shortcuts import render
 import datetime
 
 class CustomUserManager(BaseUserManager):
@@ -36,7 +37,7 @@ class EventoManager(models.Manager):
         if not evento:
             evento = self.filter(data__lte=dt, ativo=True).order_by('data').first()
             if not evento:
-                raise Http404("Event does not exist")
+                return None
         return evento
     
     def get_last_event(self):
@@ -68,4 +69,4 @@ class ParticipanteManager(models.Manager):
 class AlunoManager(models.Manager):
     def get_filtered_aluno(self,filter):
         aluno = self.annotate(full_name=Concat('nome', V(" "), 'sobrenome')).filter(full_name__icontains=filter).order_by('full_name')
-        return aluno       
+        return aluno
