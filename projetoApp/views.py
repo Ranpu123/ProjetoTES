@@ -27,8 +27,13 @@ def index(request):
     context = {}
     context['current_date'] = date.today()
     context['evento'] = evento = Evento.objects.get_home_event()
+    
+    if evento is None:
+        # Não há eventos disponíveis
+        return render(request, "evento_indisponivel.html")
+    
     context["atividades"] = Atividade.objects.filter(evento=evento).order_by("topico")
-
+    
     if request.user.is_authenticated:   
         context['user_is_participante'] = Participante.objects.filter(user=request.user).exists()
         context['user_is_inscrito'] = Inscricao.objects.filter(evento=evento, participante__user=request.user).exists()
@@ -36,7 +41,7 @@ def index(request):
         context['user_is_participante'] = False
         context['user_is_inscrito'] = False
 
-    return render(request, "home.html",context)
+    return render(request, "home.html", context)
 
 @login_required(login_url="/login")
 def inscrever(request, event_id):
