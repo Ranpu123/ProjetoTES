@@ -5,3 +5,4 @@ venv/
 .venv
 .ideia
 projetoTES/__pycache__/
+__pycache__/
